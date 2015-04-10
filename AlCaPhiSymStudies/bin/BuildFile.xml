@@ -1,0 +1,16 @@
+<use name="root"/>
+<use name="rootgraphics"/>
+<use name="FWCore/FWLite"/>
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/PythonParameterSet"/>
+<use name="DataFormats/FWLite"/>
+<use name="PhysicsTools/FWLite"/>
+<use name="DataFormats/EcalDetId"/>
+<use name="DataFormats/EcalDigi"/>
+<flags EDM_PLUGIN="1"/>
+<environment>
+  <bin
+      name="MakeAlCaPhiSymOccupancyPlot"
+      file="MakeAlCaPhiSymOccupancyPlot.cc">
+  </bin>
+</environment>
