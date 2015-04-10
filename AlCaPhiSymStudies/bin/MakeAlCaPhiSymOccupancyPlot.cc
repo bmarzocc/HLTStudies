@@ -62,6 +62,7 @@ int main( int argc, char *argv[] )
     TH2F* h2_hitOccupancy_EB = new TH2F("h2_hitOccupancy_EB","h2_hitOccupancy_EB",360,0,360,170,-85,85);
     TH2F* h2_hitOccupancy_EEP = new TH2F("h2_hitOccupancy_EEP","h2_hitOccupancy_EEP",100,1,101,100,1,101);
     TH2F* h2_hitOccupancy_EEM = new TH2F("h2_hitOccupancy_EEM","h2_hitOccupancy_EEM",100,1,101,100,1,101);
+    TH1F* h_nEvents = new TH1F("h_nEvents","h_nEvents",3,-1,2);
 
     int iEvent=0;
     for(unsigned int iFile=0; iFile<filesList.size(); iFile++)
@@ -105,11 +106,16 @@ int main( int argc, char *argv[] )
         }
     }  
     
+    std::cout << "nEvents = " << iEvent << std::endl;
+    
+    h_nEvents->SetBinContent(h_nEvents->FindBin(0),iEvent);
+    
     outFile->cd();
 
     h2_hitOccupancy_EB->Write();
     h2_hitOccupancy_EEP->Write();
     h2_hitOccupancy_EEM->Write();
+    h_nEvents->Write();
 
     outFile->Close();
 }
