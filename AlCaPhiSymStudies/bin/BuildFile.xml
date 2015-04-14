@@ -7,10 +7,15 @@
 <use name="PhysicsTools/FWLite"/>
 <use name="DataFormats/EcalDetId"/>
 <use name="DataFormats/EcalDigi"/>
+<use name="DataFormats/EcalRecHit"/>
 <flags EDM_PLUGIN="1"/>
 <environment>
   <bin
       name="MakeAlCaPhiSymOccupancyPlot"
       file="MakeAlCaPhiSymOccupancyPlot.cc">
+  </bin>
+  <bin
+      name="MakeAlCaPhiSymOccupancyPlot_2012D"
+      file="MakeAlCaPhiSymOccupancyPlot_2012D.cc">
   </bin>
 </environment>
