@@ -60,15 +60,24 @@ MakeRecoGenComparison::MakeRecoGenComparison(const edm::ParameterSet& ps){
   sumESmeared_EE.clear(); 
 
   edm::Service<TFileService> fs;
-  p_ERation_vs_bx_EB_noMultifit = fs->make<TProfile>("p_ERation_vs_bx_noMultifit_EB","p_ERation_vs_bx_noMultifit_EB",18,-13,5,0.,500.);
-  p_ERation_vs_bx_EE_noMultifit = fs->make<TProfile>("p_ERation_vs_bx_noMultifit_EE","p_ERation_vs_bx_noMultifit_EE",18,-13,5,0.,500.);
-  p_ERation_vs_bx_EB            = fs->make<TProfile>("p_ERation_vs_bx_EB","p_ERation_vs_bx_EB",18,-13,5,0.,500.);
-  p_ERation_vs_bx_EE            = fs->make<TProfile>("p_ERation_vs_bx_EE","p_ERation_vs_bx_EE",18,-13,5,0.,500.);
-  h_nEvents                     = fs->make<TH1F>("h_nEvents","h_nEvents",3,-1,2);
+  p_ERatio_vs_bx_EB_noMultifit = fs->make<TProfile>("p_ERatio_vs_bx_noMultifit_EB","p_ERatio_vs_bx_noMultifit_EB",18,-13,5,-10000000.,10000000.);
+  p_ERatio_vs_bx_EE_noMultifit = fs->make<TProfile>("p_ERatio_vs_bx_noMultifit_EE","p_ERatio_vs_bx_noMultifit_EE",18,-13,5,-10000000.,10000000.);
+  p_ERatio_vs_bx_EB            = fs->make<TProfile>("p_ERatio_vs_bx_EB","p_ERatio_vs_bx_EB",18,-13,5,-10000000.,10000000.);
+  p_ERatio_vs_bx_EE            = fs->make<TProfile>("p_ERatio_vs_bx_EE","p_ERatio_vs_bx_EE",18,-13,5,-10000000.,10000000.);
+  h_nEvents                    = fs->make<TH1F>("h_nEvents","h_nEvents",3,-1,2);
   for(int ii = -12; ii < 4;ii++){
-    std::ostringstream t;
-    t << "histoMap_" << ii;
-    histoMap[ii] = fs->make<TH1F>(t.str().c_str(),t.str().c_str(),1000,0.,20.);
+    std::ostringstream t1;
+    std::ostringstream t2;
+    std::ostringstream t3;
+    std::ostringstream t4;
+    t1 << "p_ERatio_vs_Energy_EB_noMultifit_" << ii;
+    p_ERatio_vs_Energy_EB_noMultifit[ii] = fs->make<TProfile>(t1.str().c_str(),t1.str().c_str(),200,0.,2.,-10000000.,10000000);
+    t2 << "p_ERatio_vs_Energy_EB_" << ii;
+    p_ERatio_vs_Energy_EB[ii] = fs->make<TProfile>(t2.str().c_str(),t2.str().c_str(),200,0.,2.,-10000000.,10000000);
+    t3 << "p_ERatio_vs_Energy_EE_noMultifit_" << ii;
+    p_ERatio_vs_Energy_EE_noMultifit[ii] = fs->make<TProfile>(t3.str().c_str(),t3.str().c_str(),200,0.,2.,-10000000.,10000000);
+    t4 << "p_ERatio_vs_Energy_EE_" << ii;
+    p_ERatio_vs_Energy_EE[ii] = fs->make<TProfile>(t4.str().c_str(),t4.str().c_str(),200,0.,2.,-10000000.,10000000);
   }
 
 }
@@ -227,10 +236,11 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
             float energy = it4->second;   
             float npe = energy/mapLaserCorr[ieta][iphi][iz]*simHitToPhotoelectronsEB;
             float npeSmeared = doPhotonStatistics(npe);
+            //float npeSmeared = npe;
             float energySmeared = npeSmeared/simHitToPhotoelectronsEB*mapLaserCorr[ieta][iphi][iz];   
             sumESmeared_EB[bx][ieta][iphi][iz] = energySmeared;
                  
-            std::cout << bx << " " << npe << " " << npeSmeared << std::endl;
+            //std::cout << bx << " " << npe << " " << npeSmeared << std::endl;
         } 
   
   for(std::map<int,std::map<int, std::map<int, std::map<int,float> > > >::iterator it1=sumE_EE.begin(); it1!=sumE_EE.end(); ++it1)
@@ -245,6 +255,7 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
             float energy = it4->second;   
             float npe = energy/mapLaserCorr[ix][iy][iz]*simHitToPhotoelectronsEE;
             float npeSmeared = doPhotonStatistics(npe);
+            //float npeSmeared = npe;
             float energySmeared = npeSmeared/simHitToPhotoelectronsEE*mapLaserCorr[ix][iy][iz];   
             sumESmeared_EE[bx][ix][iy][iz] = energySmeared;
         } 
@@ -262,8 +273,11 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
     {   
       if(it->first != 0) energy = calib*(*theBarrelEcalUncalibRecHits_noMultifit->find(rechitItrEB_noMultifit->id())).outOfTimeAmplitude(it->first);
       ratio = energy/sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0];
-      histoMap[it->first]->Fill(ratio);
-      p_ERation_vs_bx_EB_noMultifit->Fill(it->first,ratio);
+      if(sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0] == 0) continue;
+      p_ERatio_vs_Energy_EB_noMultifit[it->first]->Fill(sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0],ratio);
+      p_ERatio_vs_bx_EB_noMultifit->Fill(it->first,ratio);
+      /*if(sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0] < 0.02 && it->first == 0) 
+         std::cout << EBid.ieta() << " " << EBid.iphi() << " " << sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0] << " " << energy << std::endl;*/
     }
 
   }
@@ -279,9 +293,18 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
     for(std::map<int,std::map<int, std::map<int, std::map<int,float> > > >::iterator it=sumESmeared_EE.begin(); it!=sumESmeared_EE.end(); ++it)             
     {   
       if(it->first != 0) energy = calib*(*theEndcapEcalUncalibRecHits_noMultifit->find(rechitItrEE_noMultifit->id())).outOfTimeAmplitude(it->first);
-      if(EEid.zside() > 0) ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1];
-      else if(EEid.zside() < 0) ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1];
-      p_ERation_vs_bx_EE_noMultifit->Fill(it->first,ratio);
+      if(EEid.zside() > 0){
+         if(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1] == 0) continue;
+         ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1];
+         p_ERatio_vs_bx_EE_noMultifit->Fill(it->first,ratio);
+         p_ERatio_vs_Energy_EE_noMultifit[it->first]->Fill(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1],ratio);
+      }
+      else if(EEid.zside() < 0){
+         if(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1] == 0) continue;
+         ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1];
+         p_ERatio_vs_bx_EE_noMultifit->Fill(it->first,ratio);
+         p_ERatio_vs_Energy_EE_noMultifit[it->first]->Fill(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1],ratio);
+      } 
     }
 
   }
@@ -298,7 +321,9 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
     {   
       if(it->first != 0) energy = calib*(*theBarrelEcalUncalibRecHits->find(rechitItrEB->id())).outOfTimeAmplitude(it->first);
       ratio = energy/sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0];
-      p_ERation_vs_bx_EB->Fill(it->first,ratio);
+      if(sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0] == 0) continue;
+      p_ERatio_vs_Energy_EB[it->first]->Fill(sumESmeared_EB[it->first][EBid.ieta()][EBid.iphi()][0],ratio);
+      p_ERatio_vs_bx_EB->Fill(it->first,ratio);
     }
 
   }
@@ -314,9 +339,18 @@ void MakeRecoGenComparison::analyze(const edm::Event& ev, const edm::EventSetup&
     for(std::map<int,std::map<int, std::map<int, std::map<int,float> > > >::iterator it=sumESmeared_EE.begin(); it!=sumESmeared_EE.end(); ++it)             
     {   
       if(it->first != 0) energy = calib*(*theEndcapEcalUncalibRecHits->find(rechitItrEE->id())).outOfTimeAmplitude(it->first);
-      if(EEid.zside() > 0) ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1];
-      else if(EEid.zside() < 0) ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1];
-      p_ERation_vs_bx_EE->Fill(it->first,ratio);
+      if(EEid.zside() > 0){
+         if(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1] == 0) continue;
+         ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1];
+         p_ERatio_vs_bx_EE->Fill(it->first,ratio);
+         p_ERatio_vs_Energy_EE[it->first]->Fill(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][1],ratio);
+      }
+      else if(EEid.zside() < 0){
+         if(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1] == 0) continue;
+         ratio = energy/sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1];
+         p_ERatio_vs_bx_EE->Fill(it->first,ratio);
+         p_ERatio_vs_Energy_EE[it->first]->Fill(sumESmeared_EE[it->first][EEid.ix()][EEid.iy()][-1],ratio);
+      }
     }
 
   }

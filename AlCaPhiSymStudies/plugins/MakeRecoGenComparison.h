@@ -74,11 +74,14 @@ class MakeRecoGenComparison :  public edm::EDAnalyzer
   std::map<int,std::map<int,std::map<int,std::map<int,float> > > > sumESmeared_EE; 
 
   // ------------- HISTOGRAMS ------------------------------------
-  TProfile* p_ERation_vs_bx_EB_noMultifit;
-  TProfile* p_ERation_vs_bx_EE_noMultifit;
-  TProfile* p_ERation_vs_bx_EB;
-  TProfile* p_ERation_vs_bx_EE;
-  std::map<int,TH1F* > histoMap;
+  TProfile* p_ERatio_vs_bx_EB_noMultifit;
+  TProfile* p_ERatio_vs_bx_EE_noMultifit;
+  TProfile* p_ERatio_vs_bx_EB;
+  TProfile* p_ERatio_vs_bx_EE;
+  std::map<int,TProfile* > p_ERatio_vs_Energy_EB_noMultifit;
+  std::map<int,TProfile* > p_ERatio_vs_Energy_EB;
+  std::map<int,TProfile* > p_ERatio_vs_Energy_EE_noMultifit;
+  std::map<int,TProfile* > p_ERatio_vs_Energy_EE;
   TH1F* h_nEvents;
 };
 
