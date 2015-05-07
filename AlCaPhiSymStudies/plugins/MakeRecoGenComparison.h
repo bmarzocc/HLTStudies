@@ -28,9 +28,6 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
-
-#include "PhysicsTools/Utilities/macros/setTDRStyle.C"
-
 class MakeRecoGenComparison :  public edm::EDAnalyzer
 {
 
@@ -65,6 +62,8 @@ class MakeRecoGenComparison :  public edm::EDAnalyzer
 
   const float simHitToPhotoelectronsEB = 2250.0;
   const float simHitToPhotoelectronsEE = 1800.0;
+  const float ADCtoGeV_EB = 0.038940;
+  const float ADCtoGeV_EE = 0.062850;
   int naiveId_;      
 
   std::map<int,std::map<int,std::map<int,float> > > mapLaserCorr;
@@ -78,10 +77,33 @@ class MakeRecoGenComparison :  public edm::EDAnalyzer
   TProfile* p_ERatio_vs_bx_EE_noMultifit;
   TProfile* p_ERatio_vs_bx_EB;
   TProfile* p_ERatio_vs_bx_EE;
+  TH2F* h2_Occupancy_EB;
+  TH2F* h2_Occupancy_EEP;
+  TH2F* h2_Occupancy_EEM;
+  std::map<int,TH1F* > h_PCaloHits_vs_bx_EB;
+  std::map<int,TH1F* > h_PCaloHits_vs_bx_EE;
+  std::map<int,TH1F* > h_RecoEnergy_vs_bx_EB_noMultifit;
+  std::map<int,TH1F* > h_RecoEnergy_vs_bx_EE_noMultifit;
+  std::map<int,TH1F* > h_RecoEnergy_vs_bx_EB;
+  std::map<int,TH1F* > h_RecoEnergy_vs_bx_EE;
   std::map<int,TProfile* > p_ERatio_vs_Energy_EB_noMultifit;
   std::map<int,TProfile* > p_ERatio_vs_Energy_EB;
   std::map<int,TProfile* > p_ERatio_vs_Energy_EE_noMultifit;
   std::map<int,TProfile* > p_ERatio_vs_Energy_EE;
+  std::map<int,TProfile* > p_RecoEnergy_vs_Energy_EB_noMultifit;
+  std::map<int,TProfile* > p_RecoEnergy_vs_Energy_EB;
+  std::map<int,TProfile* > p_RecoEnergy_vs_Energy_EE_noMultifit;
+  std::map<int,TProfile* > p_RecoEnergy_vs_Energy_EE;
+  std::map<int,TH2F* > h2_RecoEnergy_vs_Energy_EB_noMultifit;
+  std::map<int,TH2F* > h2_RecoEnergy_vs_Energy_EB;
+  std::map<int,TH2F* > h2_RecoEnergy_vs_Energy_EE_noMultifit;
+  std::map<int,TH2F* > h2_RecoEnergy_vs_Energy_EE;
+  TH1F* h_PCaloHits_Energy_EB;
+  TH1F* h_PCaloHits_Energy_EE;
+  TH1F* h_Energy_EB_noMultifit;
+  TH1F* h_Energy_EE_noMultifit;
+  TH1F* h_Energy_EB;
+  TH1F* h_Energy_EE;
   TH1F* h_nEvents;
 };
 
