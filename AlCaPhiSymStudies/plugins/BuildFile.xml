@@ -17,7 +17,7 @@
 <use name="DataFormats/EcalDigi"/>
 <use name="DataFormats/EcalRecHit"/>
 <use name="HLTStudies/AlCaPhiSymStudies"/>
+<use name="Calibration/Tools"/>
 <library   file="*.cc" name="HLTStudiesAlCaPhiSymStudiesPlugins">
   <flags   EDM_PLUGIN="1"/>
 </library>
-
